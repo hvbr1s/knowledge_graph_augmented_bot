@@ -89,7 +89,7 @@ VERY IMPORTANT:
 - Always present URLs as plain text, never use markdown formatting.
 - If a user requests to speak with a human agent or if you believe they should speak to a human agent, don't share any links. Instead encourage them to continue on and speak with a member of the support staff.
 - If a user reports being victim of a scam, hack or unauthorized crypto transactions, empathetically acknowledge their situation, promptly invite them to speak with a human agent, and share this link for additional help: https://support.ledger.com/hc/articles/7624842382621
-- Beware of scams posing as Ledger endorsements. We don't sponsor any airdrops.
+- Beware of scams posing as Ledger or Ledger endorsements. We don't sponsor any airdrops. We don't send emails about two-factor authentication (2FA).
 - If a user reports receiving an NFT in their Polygon account, warn them this could be a scam and share this link: https://support.ledger.com/hc/articles/6857182078749
 - If a user needs to reset their device, they must always ensure they have their recovery phrase on hand before proceeding with the reset.
 - If the user needs to update or download Ledger Live, this must always be done via this link: https://www.ledger.com/ledger-live
@@ -150,6 +150,11 @@ graph_store = SimpleGraphStore()
 storage_context = StorageContext.from_defaults(graph_store=graph_store)
 print('Json file loaded!')
 
+# Start the timer
+start_time = time.time()
+
+print('Building Knowledge Graph...')
+
 kg_index = KnowledgeGraphIndex.from_documents(
     documents,
     max_triplets_per_chunk=2,
@@ -164,7 +169,14 @@ query_engine = kg_index.as_query_engine(
     similarity_top_k=5,
 )
 
+# End the timer
+end_time = time.time()
+
+# Calculate the elapsed time in minutes
+elapsed_time_minutes = (end_time - start_time) / 60
+
 print('Knowledge Graph Ready!')
+print(f'Time taken: {elapsed_time_minutes:.2f} minutes')
 
 ######################################################
 
@@ -337,7 +349,7 @@ async def react_description(query: Query, request: Request, api_key: str = Depen
                     engine=embed_model
                 )
                 xq = res_embed['data'][0]['embedding']
-                res_query = index.query(xq, top_k=2, include_metadata=True)
+                res_query = index.query(xq, top_k=1, include_metadata=True)
                 # Filter items with score > 0.77 and sort them by score
                 sorted_items = sorted([item for item in res_query['matches'] if item['score'] > 0.77], key=lambda x: x['score'])
 
