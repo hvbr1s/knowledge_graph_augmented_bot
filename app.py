@@ -120,7 +120,7 @@ llm = OpenAI(temperature=0, model="gpt-3.5-turbo")
 service_context = ServiceContext.from_defaults(llm=llm, chunk_size=512)
 
 # Load documents from a directory
-data_path = os.path.join("data")
+data_path = os.path.join("complete_data")
 data = SimpleDirectoryReader(data_path).load_data()
 print('Documents loaded!')
 
